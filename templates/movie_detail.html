@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="relative min-h-screen">
+    <a href="/browse" class="absolute top-8 left-8 z-20 bg-black/40 hover:bg-black/60 backdrop-blur-md px-4 py-2 rounded-lg text-white flex items-center gap-2 transition">
+        <i class="fas fa-arrow-left text-sm"></i> Back
+    </a>
+
+    <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0b0e14] via-[#0b0e14]/60 to-transparent z-10"></div>
+        <img src="{{ movie.poster_url }}" class="w-full h-full object-cover blur-2xl opacity-40" alt="">
+    </div>
+
+    <div class="relative z-10 pt-32 pb-20 px-12 flex flex-col md:flex-row gap-12 items-end">
+        <div class="w-72 shrink-0 shadow-2xl shadow-black">
+            <img src="{{ movie.poster_url }}" class="rounded-2xl border border-gray-700 w-full" alt="{{ movie.title }}">
+        </div>
+
+        <div class="flex-1">
+            <h1 class="text-7xl font-serif text-white mb-6">{{ movie.title }}</h1>
+            
+            <div class="flex items-center gap-4 mb-8">
+                <span class="bg-amber-500 text-black px-3 py-1 rounded-lg font-bold flex items-center gap-1">
+                    <i class="fas fa-star text-xs"></i> {{ movie.rating }}/10
+                </span>
+                <span class="flex items-center gap-2 text-gray-400"><i class="far fa-calendar"></i> {{ movie.year }}</span>
+                <span class="flex items-center gap-2 text-gray-400"><i class="far fa-clock"></i> {{ movie.duration }} min</span>
+                <span class="bg-gray-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider text-gray-300">{{ movie.genre }}</span>
+            </div>
+
+            <div class="flex gap-4 mb-12">
+                <button class="bg-white/10 hover:bg-white/20 border border-white/20 px-6 py-3 rounded-xl flex items-center gap-2 transition">
+                    <i class="fas fa-bookmark"></i> Bookmark
+                </button>
+                <button class="bg-white/10 hover:bg-white/20 border border-white/20 px-6 py-3 rounded-xl flex items-center gap-2 transition">
+                    <i class="far fa-heart"></i> Favorite
+                </button>
+            </div>
+
+            <div class="max-w-2xl">
+                <h3 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4">Synopsis</h3>
+                <p class="text-lg text-gray-300 leading-relaxed">{{ movie.description }}</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-8 mt-12">
+                <div class="bg-white/5 p-6 rounded-2xl border border-white/5">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Director</h4>
+                    <p class="text-white font-medium text-lg">{{ movie.director }}</p>
+                </div>
+                <div class="bg-white/5 p-6 rounded-2xl border border-white/5">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Cast</h4>
+                    <p class="text-white font-medium text-lg">{{ movie.cast }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,4 @@
+        body { background-color: #0b0e14; color: #ffffff; }
+        .sidebar { background-color: #0f121a; }
+        .nav-item:hover { background-color: #1a1f29; }
+        .nav-active { background-color: #1a1f29; color: #fbbf24; border-right: 4px solid #fbbf24; }

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+    {% for movie in movies %}
+    <div class="group relative bg-[#0f121a] rounded-2xl overflow-hidden transition-transform hover:-translate-y-2">
+        <div class="aspect-[2/3] bg-gray-800 relative">
+            <img src="{{ movie.image_url }}" alt="{{ movie.title }}" class="w-full h-full object-cover">
+            
+            <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
+                <i class="fas fa-star text-yellow-500 text-xs"></i>
+                <span class="text-xs font-bold">{{ movie.rating }}</span>
+            </div>
+
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                {% if session.user %}
+                <a href="/bookmark/{{ movie._id }}" class="bg-white text-black p-3 rounded-full hover:bg-yellow-500 transition">
+                    <i class="fas fa-bookmark"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="p-4">
+            <h4 class="font-bold text-lg truncate">{{ movie.title }}</h4>
+            <div class="flex items-center gap-3 mt-1">
+                <span class="text-[10px] bg-cyan-900 text-cyan-300 px-2 py-0.5 rounded font-bold uppercase">{{ movie.genre }}</span>
+                <span class="text-sm text-gray-500">{{ movie.year }}</span>
+            </div>
+            
+            {% if session.user and session.user.role == 'admin' %}
+            <div class="mt-4 flex gap-2">
+                <a href="/admin/edit/{{ movie._id }}" class="text-xs text-gray-400 hover:text-white">Edit</a>
+                <form action="/manage_movie/delete{{ movie._id }}" method="POST" class="inline">
+                    <button class="text-xs text-red-500 hover:text-red-300">Delete</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

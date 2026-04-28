@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Movies - MovieVault{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-end mb-8">
+    <div>
+        <h2 class="text-4xl font-serif text-white mb-2">Manage Movies</h2>
+        <p class="text-gray-500">{{ count }} movies in catalog</p>
+    </div>
+    <button onclick="toggleModal()" class="bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-6 rounded-xl flex items-center gap-2 transition">
+        <i class="fas fa-plus"></i> Add Movie
+    </button>
+</div>
+
+<div class="bg-[#1e293b]/50 rounded-2xl border border-gray-800 overflow-hidden shadow-2xl">
+    <table class="w-full text-left">
+        <thead class="bg-slate-800/50 text-gray-400 text-xs uppercase tracking-wider">
+            <tr>
+                <th class="px-6 py-4">Movie</th>
+                <th class="px-6 py-4">Genre</th>
+                <th class="px-6 py-4">Year</th>
+                <th class="px-6 py-4 text-center">Rating</th>
+                <th class="px-6 py-4 text-right">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800">
+            {% for movie in movies %}
+            <tr class="hover:bg-slate-800/40 transition group">
+                <td class="px-6 py-4 flex items-center gap-4">
+                    <img src="{{ movie.poster_url }}" class="w-12 h-16 object-cover rounded shadow-md" alt="Poster">
+                    <div>
+                        <p class="text-white font-bold">{{ movie.title }}</p>
+                        <p class="text-sm text-gray-500">{{ movie.director }}</p>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="bg-slate-700 text-slate-300 text-[10px] font-bold px-2.5 py-1 rounded-md">{{ movie.genre }}</span>
+                </td>
+                <td class="px-6 py-4 text-sm font-mono">{{ movie.year }}</td>
+                <td class="px-6 py-4 text-center text-amber-500 font-bold">
+                    <i class="fas fa-star text-xs"></i> {{ movie.rating }}
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <div class="flex justify-end gap-3 text-gray-500">
+                            <button type="button" 
+                                    onclick="openUpdateModal(
+                                        '{{ movie._id }}', 
+                                        '{{ movie.title | replace("'", "\\'") }}', 
+                                        '{{ movie.genre }}', 
+                                        '{{ movie.year }}', 
+                                        '{{ movie.rating }}', 
+                                        '{{ movie.duration }}', 
+                                        '{{ movie.director | replace("'", "\\'") }}', 
+                                        '{{ movie.cast | replace("'", "\\'") }}', 
+                                        '{{ movie.poster_url }}', 
+                                        '{{ movie.trailer_url }}', 
+                                        '{{ movie.description | replace("'", "\\'") }}'
+                                    )" 
+                                    class="hover:text-amber-500 transition-colors">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                        <form action="{{ url_for('delete_movie', id=movie._id) }}" method="POST" class="inline">
+                            <button class="hover:text-red-500 transition"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block modal %}
+<div id="addMovieModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div class="bg-[#111827] w-full max-w-xl rounded-2xl shadow-2xl border border-gray-800 overflow-hidden">
+        
+        <div class="p-6 border-b border-gray-800 flex justify-between items-center">
+            <h2 class="text-2xl font-serif text-white">Add New Movie</h2>
+            <button onclick="toggleModal()" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+
+        <form action="{{ url_for('add_movie') }}" method="POST" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+            
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Title *</label>
+                <input type="text" name="title" placeholder="Movie title" required
+                    class="w-full bg-[#1f2937] border border-amber-500/50 rounded-lg py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Genre *</label>
+                    <select name="genre" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white outline-none">
+                        <option>Action</option>
+                        <option>Sci-Fi</option>
+                        <option>Drama</option>
+                        <option>Thriller</option>
+                        <option>Annimation</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Release Year</label>
+                    <input type="number" name="year" placeholder="2024" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Rating (0-10)</label>
+                    <input type="text" name="rating" placeholder="8.5" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Duration (min)</label>
+                    <input type="text" name="duration" placeholder="120" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Director</label>
+                    <input type="text" name="director" placeholder="Director name" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Cast</label>
+                    <input type="text" name="cast" placeholder="Actor 1, Actor 2..." class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Poster URL</label>
+                <input type="url" name="poster_url" placeholder="https://..." class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Trailer URL</label>
+                <input type="url" name="trailer_url" placeholder="https://..." class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Description</label>
+                <textarea name="description" rows="3" placeholder="Movie synopsis..." 
+                    class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white resize-none"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" onclick="toggleModal()" class="px-6 py-2 text-gray-400 hover:text-white transition">Cancel</button>
+                <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-8 rounded-xl transition">
+                    Save Movie
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--- UPDATE MODAL --->
+
+<div id="updateMovieModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div class="bg-[#111827] w-full max-w-xl rounded-2xl shadow-2xl border border-gray-800 overflow-hidden">
+        
+        <div class="p-6 border-b border-gray-800 flex justify-between items-center">
+            <h2 class="text-2xl font-serif text-white">Update Movie</h2> 
+            <button onclick="updatetoggleModal()" class="text-gray-400 hover:text-white">&times;</button>
+        </div>
+
+        <form action="/manage_movies/update" method="POST" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto no-scrollbar">
+            <input type="hidden" name="movie_id" id="upd_id">
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Title *</label>
+                <input type="text" name="title" id="upd_title" required class="w-full bg-[#1f2937] border border-amber-500/50 rounded-lg py-2 px-4 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Genre *</label>
+                    <select name="genre" id="upd_genre" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white outline-none">
+                        <option value="Action">Action</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="Animation">Animation</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Release Year</label>
+                    <input type="number" name="year" id="upd_year" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Rating</label>
+                    <input type="text" name="rating" id="upd_rating" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Duration</label>
+                    <input type="text" name="duration" id="upd_duration" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Director</label>
+                    <input type="text" name="director" id="upd_director" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Cast</label>
+                    <input type="text" name="cast" id="upd_cast" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Poster URL</label>
+                <input type="url" name="poster_url" id="upd_poster" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Description</label>
+                <textarea name="description" id="upd_description" rows="3" class="w-full bg-[#1f2937] border border-gray-700 rounded-lg py-2 px-4 text-white resize-none"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" onclick="updatetoggleModal()" class="px-6 py-2 text-gray-400 hover:text-white transition">Cancel</button>
+                <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-8 rounded-xl transition shadow-lg shadow-amber-500/20">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
