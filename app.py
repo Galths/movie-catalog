@@ -1,35 +1,19 @@
 import os
 
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
 from pymongo import MongoClient
-from dotenv import load_dontev
-
-# Load variables from .env file
-load_dotenv()
-
-# Replace <password> with your actual password in the .env file
-uri = os.getenv("MONGO_URI")
-
-client = MongoClient(uri)
-
-# Send a ping to confirm a successful connection
-try:
-    client.admin.command('ping')
-    print("Successfully connected to MongoDB Atlas!")
-except Exception as e:
-    print(f"Error connecting: {e}")
 
 app = Flask(__name__)
 app.secret_key = "secret_dev_key" # Change this for production!
 
 # MongoDB Configuration
-app.config["MONGO_URI"] = "mongodb://localhost:27017/movieDB"
-mongo = PyMongo(app)
+MONGO_URI = os.environ.get("MONGO_URI")
+mongo = MongoClient(MONGO_URI)
 movieDB = mongo.db
 movieCollection = movieDB.movieCollection
 users = movieDB.users
