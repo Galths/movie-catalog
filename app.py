@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.secret_key = "secret_dev_key" # Change this for production!
 
 # MongoDB Configuration
-MONGO_URI = mongodb+srv://gabrielgitmyhub_db_user:<db_password>@cluster0.mjbnjto.mongodb.net/?appName=Cluster0"MONGO_URI")
+MONGO_URI = mongodb+srv://gabrielgitmyhub_db_user:hxIYm9MeFwisVsa1@cluster0.mjbnjto.mongodb.net/?appName=Cluster0"MONGO_URI")
 mongo = MongoClient(MONGO_URI)
 movieDB = mongo.db
 movieCollection = movieDB.movieCollection
