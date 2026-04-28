@@ -8,7 +8,7 @@ from functools import wraps
 
 from pymongo import MongoClient
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "secret_dev_key" # Change this for production!
 
 # MongoDB Configuration
